@@ -1,61 +1,169 @@
-# NestJS Task Manager
+# TaskMan
 
-A simple task management API built with [NestJS](https://nestjs.com/).
+API REST para gerenciamento de tarefas construída com NestJS e TypeScript.
 
 ## Features
 
-- User authentication (JWT)
-- CRUD operations for tasks
-- Task status management
-- Validation and error handling
+- Autenticação JWT
+- CRUD de tarefas
+- Gerenciamento de status das tarefas
+- Validação de dados com class-validator
+- Arquitetura modular
 
-## Getting Started
+## Requisitos
 
-### Prerequisites
+- Node.js v18+
+- Yarn ou npm
 
-- Node.js (v18+)
-- Yarn
-
-### Installation
+## Instalação
 
 ```bash
+# Clone o repositório
+git clone https://github.com/p-v-dev/TaskMan.git
+cd TaskMan
+
+# Instale as dependências
 yarn install
 ```
 
-### Environment Setup
+## Configuração
 
-Create a `.env` file in the project root with the required environment variables. Example:
+Crie um arquivo `.env` na raiz do projeto:
 
 ```env
-JWT_SECRET=your_jwt_secret
-DATABASE_URL=your_database_url
-DATABASE_URL=your_database_url
-DATABASE_URL=your_database_url
-DATABASE_URL=your_database_url
+JWT_SECRET=seu_secret_aqui
+DATABASE_URL=sua_database_url
+PORT=3000
 ```
 
-### Running the App
+## Executando
 
 ```bash
-yarn start
+# Desenvolvimento
+yarn start:dev
+
+# Produção
+yarn build
+yarn start:prod
 ```
 
-The API will be available at `http://localhost:3000`.
+A API estará disponível em `http://localhost:3000`
 
-## Usage
+## Endpoints
 
-- Register and log in to obtain a JWT token.
-- Use the token to access protected task endpoints.
+### Autenticação
 
-## API Endpoints
+**Registrar**
+```http
+POST /auth/signup
+Content-Type: application/json
 
-- `POST /auth/signup` - Register a new user
-- `POST /auth/signin` - Log in
-- `GET /tasks` - List tasks
-- `POST /tasks` - Create a task
-- `PATCH /tasks/:id/status` - Update task status
-- `DELETE /tasks/:id` - Delete a task
+{
+  "username": "usuario",
+  "password": "senha123"
+}
+```
 
-## License
+**Login**
+```http
+POST /auth/signin
+Content-Type: application/json
+
+{
+  "username": "usuario",
+  "password": "senha123"
+}
+```
+
+Retorna:
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+### Tarefas
+
+> Todas as rotas de tarefas requerem autenticação via header `Authorization: Bearer {token}`
+
+**Listar tarefas**
+```http
+GET /tasks
+```
+
+Query params opcionais:
+- `status`: Filtrar por status (OPEN, IN_PROGRESS, DONE)
+- `search`: Buscar em título/descrição
+
+**Criar tarefa**
+```http
+POST /tasks
+Content-Type: application/json
+
+{
+  "title": "Nome da tarefa",
+  "description": "Descrição da tarefa"
+}
+```
+
+**Buscar tarefa por ID**
+```http
+GET /tasks/:id
+```
+
+**Atualizar status**
+```http
+PATCH /tasks/:id/status
+Content-Type: application/json
+
+{
+  "status": "IN_PROGRESS"
+}
+```
+
+Status válidos: `OPEN`, `IN_PROGRESS`, `DONE`
+
+**Deletar tarefa**
+```http
+DELETE /tasks/:id
+```
+
+## Estrutura
+
+```
+src/
+├── auth/              # Módulo de autenticação
+│   ├── auth.controller.ts
+│   ├── auth.service.ts
+│   └── jwt.strategy.ts
+├── tasks/             # Módulo de tarefas
+│   ├── tasks.controller.ts
+│   ├── tasks.service.ts
+│   └── dto/
+└── main.ts
+```
+
+## Tecnologias
+
+- NestJS
+- TypeScript
+- JWT (Passport)
+- TypeORM
+- class-validator
+
+## Testes
+
+```bash
+# Testes unitários
+yarn test
+
+# Testes e2e
+yarn test:e2e
+
+# Coverage
+yarn test:cov
+```
+
+## Licença
 
 MIT
