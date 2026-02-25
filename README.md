@@ -1,6 +1,6 @@
 # TaskMan
 
-API REST para gerenciamento de tarefas construída com NestJS e TypeScript.
+API REST para gerenciamento de tarefas construída com NestJS.
 
 ## Features
 
@@ -46,8 +46,6 @@ yarn start:dev
 yarn build
 yarn start:prod
 ```
-
-A API estará disponível em `http://localhost:3000`
 
 ## Endpoints
 
