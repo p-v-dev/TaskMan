@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: .
+      target: builder        # usa o stage de build para dev (hot reload)
+    container_name: taskman-api
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app                # monta o código local para hot reload
+      - /app/node_modules     # preserva node_modules do container
+    command: yarn start:dev
+
+  db:
+    image: postgres:16-alpine
+    container_name: taskman-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-taskman}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-taskman}
+      POSTGRES_DB: ${DB_NAME:-taskman}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-taskman}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
