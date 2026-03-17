@@ -17,9 +17,9 @@ import { ConfigModule } from '@nestjs/config';
   url: process.env.DATABASE_URL,
   autoLoadEntities: true,
   synchronize: true,
-  ssl: process.env.NODE_ENV === 'production'
-    ? { rejectUnauthorized: false }
-    : false,
+  ssl: { rejectUnauthorized: false },
+  retryAttempts: 10,       // tenta 10 vezes
+  retryDelay: 3000,        // espera 3s entre tentativas
 }),
     AuthModule,
   ],
